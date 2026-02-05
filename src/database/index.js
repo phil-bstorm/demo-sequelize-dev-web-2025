@@ -21,11 +21,15 @@ Environment.hasMany(Monster, {
 // Monster a plusieurs Characteristic (N-N)
 Monster.belongsToMany(Characteristic, {
   through: "Monsters_Characteristics",
+  foreignKey: "monsterId", // Clé pointant vers Monster
+  otherKey: "characteristicId", // Clé pointant vers Characteristic
   as: "traits",
 });
 // Characteristic peut être lié à plusieurs Monsters (N-N)
 Characteristic.belongsToMany(Monster, {
   through: "Monsters_Characteristics",
+  foreignKey: "characteristicId", // Clé pointant vers Characteristic
+  otherKey: "monsterId", // Clé pointant vers Monster
   as: "monsters",
 });
 
