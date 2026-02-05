@@ -1,6 +1,7 @@
 const { sequelize } = require("./config");
 const Monster = require("./entities/monster.entity");
 const Environment = require("./entities/environment.entity");
+const Characteristic = require("./entities/characteristic.entity");
 
 // Définir les relations entre les modèles
 // Monster a une relation (1-1) vers Environment
@@ -17,8 +18,20 @@ Environment.hasMany(Monster, {
   foreignKey: "environmentId",
 });
 
+// Monster a plusieurs Characteristic (N-N)
+Monster.belongsToMany(Characteristic, {
+  through: "Monsters_Characteristics",
+  as: "traits",
+});
+// Characteristic peut être lié à plusieurs Monsters (N-N)
+Characteristic.belongsToMany(Monster, {
+  through: "Monsters_Characteristics",
+  as: "monsters",
+});
+
 module.exports = {
   sequelize,
   Monster,
   Environment,
+  Characteristic,
 };
