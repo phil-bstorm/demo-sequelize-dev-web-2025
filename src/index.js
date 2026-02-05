@@ -1,7 +1,14 @@
 require("dotenv").config();
 
 const { sequelize } = require("./database");
-const { demoCreate, demoFindAll } = require("./demo");
+const {
+  demoCreate,
+  demoFindAll,
+  demoFindOne,
+  demoWhereCondition,
+  demoUpdate,
+  demoDelete,
+} = require("./demo");
 
 console.log("hello world");
 
@@ -16,6 +23,16 @@ const main = async () => {
   await demoCreate();
 
   await demoFindAll();
+
+  await demoFindOne();
+
+  await demoWhereCondition();
+
+  await demoUpdate();
+
+  await demoDelete();
+
+  process.exit(0);
 };
 
 main();
