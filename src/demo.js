@@ -1,27 +1,28 @@
 const { Op } = require("sequelize");
-const { Monster } = require("./database");
+const { Monster, Environment } = require("./database");
 
-const demoCreate = async () => {
-  // INSERT INTO
-  const dragon = await Monster.create({
-    nom: "Dragon",
-  });
-  const elft = await Monster.create({
-    nom: "Elft",
-  });
-  console.log(dragon);
-  console.log(dragon.id);
+// Ne fonctionne plus car on a rajouté une relation obligatoire dans monster
+// const demoCreate = async () => {
+//   // INSERT INTO
+//   const dragon = await Monster.create({
+//     nom: "Dragon",
+//   });
+//   const elft = await Monster.create({
+//     nom: "Elft",
+//   });
+//   console.log(dragon);
+//   console.log(dragon.id);
 
-  // Multiple insertion
-  const tableauDeMonstres = await Monster.bulkCreate([
-    {
-      nom: "Gnome",
-    },
-    {
-      nom: "Sirène",
-    },
-  ]);
-};
+//   // Multiple insertion
+//   const tableauDeMonstres = await Monster.bulkCreate([
+//     {
+//       nom: "Gnome",
+//     },
+//     {
+//       nom: "Sirène",
+//     },
+//   ]);
+// };
 
 const demoFindAll = async () => {
   // SELECT * FROM Monster
@@ -121,11 +122,70 @@ const demoDelete = async () => {
   }
 };
 
+const demoCreateWithRelation = async () => {
+  // 1. Créer les environments
+  const volcan = await Environment.create({
+    name: "Volcan",
+  });
+  const ocean = await Environment.create({
+    name: "Ocean",
+  });
+  const foret = await Environment.create({
+    name: "Forêt",
+  });
+
+  // 2. Créer les monstres
+  const dragon = await Monster.create({
+    nom: "Dragon Ancestral",
+    puissance: 50,
+    environmentId: volcan.id,
+  });
+  const tableauDeMonstres = await Monster.bulkCreate([
+    {
+      nom: "Elfe de sang",
+      environmentId: foret.id,
+    },
+    {
+      nom: "Elfe de la nuit",
+      environmentId: foret.id,
+    },
+    {
+      nom: "Gnome",
+      environmentId: foret.id,
+    },
+    {
+      nom: "Sirène",
+      environmentId: ocean.id,
+    },
+  ]);
+};
+
+const demoFindWithRelation = async () => {
+  const sirene = await Monster.findOne({
+    where: {
+      nom: "Sirène",
+    },
+    // JOIN
+    include: [
+      // JOIN environment
+      {
+        model: Environment,
+        as: "environment",
+      },
+    ],
+  });
+  if (sirene) {
+    console.log(`${sirene.nom} vie dans ${sirene.environment.name}`);
+  }
+};
+
 module.exports = {
-  demoCreate,
+  //   demoCreate, // Ne fonctionne plus car on a rajouté une relation obligatoire dans monster
   demoFindAll,
   demoFindOne,
   demoWhereCondition,
   demoUpdate,
   demoDelete,
+  demoCreateWithRelation,
+  demoFindWithRelation,
 };

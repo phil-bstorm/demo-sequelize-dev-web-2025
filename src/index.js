@@ -2,12 +2,14 @@ require("dotenv").config();
 
 const { sequelize } = require("./database");
 const {
-  demoCreate,
+  //   demoCreate,
+  demoCreateWithRelation,
   demoFindAll,
   demoFindOne,
   demoWhereCondition,
   demoUpdate,
   demoDelete,
+  demoFindWithRelation,
 } = require("./demo");
 
 console.log("hello world");
@@ -20,7 +22,8 @@ const main = async () => {
   // ATTENTION NE JAMAIS LAISSER force: true en production
   await sequelize.sync({ force: true });
 
-  await demoCreate();
+  //   await demoCreate();
+  await demoCreateWithRelation();
 
   await demoFindAll();
 
@@ -30,7 +33,9 @@ const main = async () => {
 
   await demoUpdate();
 
-  await demoDelete();
+  //   await demoDelete();
+
+  await demoFindWithRelation();
 
   process.exit(0);
 };
