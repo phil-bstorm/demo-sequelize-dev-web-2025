@@ -1,5 +1,5 @@
 const { Op } = require("sequelize");
-const { Monster, Environment } = require("./database");
+const { Monster, Environment, Characteristic } = require("./database");
 
 // Ne fonctionne plus car on a rajouté une relation obligatoire dans monster
 // const demoCreate = async () => {
@@ -123,7 +123,7 @@ const demoDelete = async () => {
 };
 
 const demoCreateWithRelation = async () => {
-  // 1. Créer les environments
+  // 1. Créer les environments et characteristics
   const volcan = await Environment.create({
     name: "Volcan",
   });
@@ -134,12 +134,27 @@ const demoCreateWithRelation = async () => {
     name: "Forêt",
   });
 
+  const volant = await Characteristic.create({
+    name: "Volant",
+  });
+  const nageur = await Characteristic.create({
+    name: "Nageur",
+  });
+  const cracheFeu = await Characteristic.create({
+    name: "Crache du feu",
+  });
+
   // 2. Créer les monstres
   const dragon = await Monster.create({
     nom: "Dragon Ancestral",
     puissance: 50,
     environmentId: volcan.id,
   });
+
+  // Ajouter des informations dans une table Many-To-Many
+  // "Magic method"
+  await dragon.addTraits([volant, cracheFeu]);
+
   const tableauDeMonstres = await Monster.bulkCreate([
     {
       nom: "Elfe de sang",
@@ -176,6 +191,24 @@ const demoFindWithRelation = async () => {
   });
   if (sirene) {
     console.log(`${sirene.nom} vie dans ${sirene.environment.name}`);
+  }
+
+  const dragon = await Monster.findOne({
+    where: {
+      nom: "Dragon Ancestral",
+    },
+    // include: [
+    //   {
+    //     model: Characteristic,
+    //     as: "traits",
+    //   },
+    // ],
+  });
+  if (dragon) {
+    const traits = await dragon.getTraits();
+    console.log("Trait du dragon:");
+    // dragon.traits.forEach((t) => console.log(t.name));
+    traits.forEach((t) => console.log(t.name));
   }
 };
 
