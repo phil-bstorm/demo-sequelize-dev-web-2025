@@ -1,6 +1,7 @@
 require("dotenv").config();
 
-const { sequelize, Monster } = require("./database");
+const { sequelize } = require("./database");
+const { demoCreate, demoFindAll } = require("./demo");
 
 console.log("hello world");
 
@@ -8,23 +9,13 @@ const main = async () => {
   await sequelize.authenticate();
   console.log("C'est good!!");
 
-  await sequelize.sync();
+  // force: true => remise à zéro de la database
+  // ATTENTION NE JAMAIS LAISSER force: true en production
+  await sequelize.sync({ force: true });
 
-  // INSERT INTO
-  //   const dragon = await Monster.create({
-  //     nom: "Dragon",
-  //   });
-  //   console.log(dragon);
+  await demoCreate();
 
-  // SELECT * FROM Monster
-  const listeMonsters = await Monster.findAndCountAll();
-  console.log(listeMonsters);
-
-  listeMonsters.rows.forEach((m) => console.log(m.nom));
-
-  for (let i = 0; i < listeMonsters.rows.length; i++) {
-    console.log(listeMonsters.rows[i].nom);
-  }
+  await demoFindAll();
 };
 
 main();

@@ -13,6 +13,10 @@ const Monster = sequelize.define(
       type: DataTypes.STRING,
       allowNull: false,
     },
+    puissance: {
+      type: DataTypes.INTEGER,
+      defaultValue: 5,
+    },
   },
   {
     // OPTIONS
